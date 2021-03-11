@@ -26,7 +26,7 @@ const getRandom = (ext) => {
     return `${Math.floor(Math.random() * 10000)}${ext}`
 }
 
-const hilih = (text) => {
+const hilih = (text) => { // by LoL-Human and MRHRTZ@kali~:#
     const K = new RegExp("[AIUEOaiueo]", "g")
     text = text.replace(K, "i")
     return text
