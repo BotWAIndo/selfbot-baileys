@@ -11,7 +11,7 @@ cd selfbot-baileys
 PS: `Kalo ada yang kurang tambah sendiri. Asli saya lupa apa aja :D`
 ```sh
 pkg install -y ffmpeg imagemagick libwebp
-wget https://github.com/git.io/webp2gif && chmod +x webp2gif
+wget https://git.io/webp2gif && chmod +x webp2gif
 npm install
 ```
 
