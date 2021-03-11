@@ -3,7 +3,7 @@
 
 ## Cloning
 ```sh
-git clone https://github.com/BotWAIndo/selfbot-baileys.git
+git clone https://github.com/github.com/BotWAIndo/selfbot-baileys.git
 cd selfbot-baileys
 ```
 
@@ -11,7 +11,7 @@ cd selfbot-baileys
 PS: `Kalo ada yang kurang tambah sendiri. Asli saya lupa apa aja :D`
 ```sh
 pkg install -y ffmpeg imagemagick libwebp
-wget https://git.io/webp2gif && chmod +x webp2gif
+wget https://github.com/git.io/webp2gif && chmod +x webp2gif
 npm install
 ```
 
@@ -25,7 +25,7 @@ node index.js
 **sakit tau, bayangkan karya kamu diambil orang tanpa ada nama kamu disitu :'D**
 
 ## Terima Kasih
-- [MhankBarBar](https://MhankBarBar)
-    - [termux-wabot](https://MhankBarBar/termux-wabot)
-- [adiwajshing](https://adiwajshing)
-    - [Baileys](https://adiwajshing/baileys)
+- [MhankBarBar](https://github.com/github.com/MhankBarBar)
+    - [termux-wabot](https://github.com/MhankBarBar/termux-wabot)
+- [adiwajshing](https://github.com/adiwajshing)
+    - [Baileys](https://github.com/adiwajshing/baileys)
