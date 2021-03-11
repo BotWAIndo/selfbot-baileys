@@ -1,0 +1,9 @@
+# Directory
+node_modules/
+
+# Session File
+Midnight.json
+
+# Lock File
+*-lock.json
+*.lock
