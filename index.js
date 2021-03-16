@@ -540,10 +540,9 @@ async function starts() {
                         client.sendMessage(from, {displayName: disname, vcard: vcard}, contact)
                         break
                 case 'tr':
-                    case 'translate':
                         if (mek.message.extendedTextMessage === undefined || mek.message.extendedTextMessage === null) {
                             tolang = args[0]
-                            entah = body.slice(args[0].length+1)
+                            entah = body.slice(3+args[0].length+1)
                             translate(entah, tolang)
                             .then((res) => { reply(`${res}`) })
                         } else {

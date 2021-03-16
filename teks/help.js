@@ -26,5 +26,5 @@ exports.Help = (prefix) => {
 23. ${prefix}kontag -> Kontak dengan Tag
 24. ${prefix}kontak -> Kirim Kontak
 25. ${prefix}tomp3 -> Video jadi mp3
-26. ${prefix}translate -> Terjemah bahasa asing`
+26. ${prefix}tr -> Terjemah bahasa asing`
 }
