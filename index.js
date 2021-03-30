@@ -11,7 +11,6 @@ const fs = require('fs')
 const { color, processTime, sleep, getGroupAdmins, getRandom, hilih } = require('./utils/index')
 const { fetchJson, getBuffer, fetchText, uploadImages } = require('./utils/fetcher')
 const { custom, random } = require('./utils/meme')
-// const { fisheye } = require('./utils/fisheye')
 const { exec, spawn } = require('child_process')
 const translate = require('./utils/translate')
 const moment = require('moment-timezone')
@@ -66,7 +65,6 @@ async function starts() {
             mek = JSON.parse(JSON.stringify(mek)).messages[0]
             if (!mek.message) return
             if (mek.key && mek.key.remoteJid === 'status@broadcast') return
-            global.prefix
             const content = JSON.stringify(mek.message)
             const from = mek.key.remoteJid
             const type = Object.keys(mek.message)[0]
@@ -378,7 +376,7 @@ async function starts() {
                     break
                 case 'memeimg':
                     case 'memeimage':
-                            if ((isMedia && !mek.message.videoMessage || isQuotedImage) && args.length > 2) {
+                            if ((isMedia && !mek.message.videoMessage || isQuotedImage) && args.length > 0) {
                                 const top = arg.split('|')[0]
                                 const bottom = arg.split('|')[1]
                                 const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace("quotedM","m")).message.extendedTextMessage.contextInfo : mek
@@ -565,46 +563,6 @@ async function starts() {
                     }
                     break
             default:
-                if ((mek.key.fromMe && budy != undefined) && budy === 'cek') {
-                    var options = {
-                        contextInfo: {
-                            participant: `0@s.whatsapp.net`,
-                            remoteJid: "status@broadcast",
-                            quotedMessage: {
-                                productMessage: {
-                                    product: {
-                                        currencyCode: "USD",
-                                        description: fake,
-                                        title: fake,
-                                        priceAmount1000: "999999999",
-                                        productImageCount: 1,
-                                        productImage: {
-                                            mimetype: "image/png",
-                                            jpegThumbnail: gambar64
-                                        }
-                                    },
-                                    businessOwnerJid: "0@s.whatsapp.net"
-                                }
-                            }
-                        }
-                    }
-                    client.sendMessage(from, `Prefix : ${prefix}\nReply : ${fake}\nNumber : ${numbernya}\nPing : *${processTime(mek.messageTimestamp, moment())} _seconds_*`, text, options)
-                } else if ((mek.key.fromMe && budy != undefined) && budy === 'yamete' || budy === 'ah') {
-                    ran = getRandom('.webp')
-                    ffmpeg('./media/images/ahegao.jpeg')
-                    .input('./media/images/ahegao.jpeg')
-                    .on('start', function (cmd) {
-                        console.log(`Started: ${cmd}`)
-                    })
-                    .on('end', function() {
-                        console.log('Finish')
-                        client.sendMessage(from, fs.readFileSync(ran), sticker, {quoted: mek})
-                        fs.unlinkSync(ran)
-                    })
-                    .addOutputOptions([`-vcodec`,`libwebp`,`-vf`,`scale='min(320,iw)':min'(320,ih)':force_original_aspect_ratio=decrease,fps=15, pad=320:320:-1:-1:color=white@0.0, split [a][b]; [a] palettegen=reserve_transparent=on:transparency_color=ffffff [p]; [b][p] paletteuse`])
-                    .toFormat('webp')
-                    .save(ran)
-                }
                 }
             }
         } catch(err) {
