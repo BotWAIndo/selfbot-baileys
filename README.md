@@ -20,6 +20,11 @@ npm install
 node index.js
 ```
 
+## Basic Info
+`prefix:` . [change here](https://github.com/BotWAIndo/selfbot-baileys/blob/master/index.js#L24) | bisa juga menggunakan `.setprefix <new prefix>` <br />
+`fake reply:` 𝐒𝐄𝐋𝐅𝐁𝐎𝐓 [change here](https://github.com/BotWAIndo/selfbot-baileys/blob/master/index.js#L25) | bisa juga menggunakan `.setpesan <pesan baru>` <br />
+**Mungkin translate sedikit kurang akurat**
+
 ## Peringatan Keras
 **Jika kamu ingin merecode SC (source code) ini mohon janngan dihapus yah nama saya :D**<br />
 **sakit tau, bayangkan karya kamu diambil orang tanpa ada nama kamu disitu :'D**

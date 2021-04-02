@@ -1,3 +1,8 @@
+/**
+ * Original creator: MhankBarBar
+ * Rewrite from scratch: FaizBastomi
+ * Lib creator: adiwajshing
+ */
 const {
     WAConnection,
     Mimetype,
@@ -20,29 +25,25 @@ const figlet = require('figlet')
 const lolcatjs = require('lolcatjs')
 const phoneNum = require('awesome-phonenumber')
 const { menuId } = require('./teks')
+const mmnt = require("moment")
+require("moment-duration-format")
 
 prefix = '.'
 fake = '𝐒𝐄𝐋𝐅𝐁𝐎𝐓'
 numbernya = '0'
+readyAt = new Date().valueOf()
 let gambar64 = "" || fs.readFileSync('./media/images/9739.png')
 
-function kyun(seconds){
-    function pad(s){
-      return (s < 10 ? '0' : '') + s;
-    }
-    var hours = Math.floor(seconds / (60*60));
-    var minutes = Math.floor(seconds % (60*60) / 60);
-    var seconds = Math.floor(seconds % 60);
-  
-    //return pad(hours) + ':' + pad(minutes) + ':' + pad(seconds)
-    return `-[ 𝙍𝙐𝙉𝙏𝙄𝙈𝙀 ]-\n${pad(hours)}H ${pad(minutes)}M ${pad(seconds)}S`
+function kyun() {
+    const moment = mmnt.duration(Date.now() - readyAt).format("D [hari], H [jam], m [menit], s [detik]")
+    return `- [ 𝙍𝙐𝙉𝙏𝙄𝙈𝙀 ] - \n${moment}`
 }
 
 async function starts() {
     const client = new WAConnection()
 
     client.logger.level = 'warn'
-    client.browserDescription=Browsers.ubuntu("Chrome")
+    client.browserDescription=Browsers.macOS("Firefox")
 
     client.on('qr', () => {
         console.log('[', color('!', 'red') ,']', 'Please, scan the QR code!')
@@ -148,6 +149,7 @@ async function starts() {
                     }
                     break
                     case 'h':
+                        case 'hidetag':
                         var value = args.join(" ")
                         var grup = await client.groupMetadata(from)
                         var member = grup['participants']
@@ -249,8 +251,7 @@ async function starts() {
                 reply(`*Berhasil mengubah pesan reply ke: ${fake}*`)
                 break
             case 'runtime':
-                runtime = process.uptime()
-                teks = `${kyun(runtime)}`
+                teks = `${kyun()}`
                 const rtime = {
                     contextInfo: {
                         participant: `${numbernya}@s.whatsapp.net`,
@@ -354,7 +355,7 @@ async function starts() {
                             .toFormat('webp')
                             .save(ran)
                         } else {
-                            reply('Tidak ada video/gif/gambar yang akan dijadikan stiker!')
+                            reply('Tidak ada video/gif/gambar yang akan dijadikan stiker!\nMaksimal durasi video 11detik')
                         }
                 break
                 case 'meme':
@@ -496,16 +497,16 @@ async function starts() {
                     case 'group':
                         if (!isGroup) return
                         if (args.length == 0) return reply('Masukan parameter _<setting>_ | _<yes/no>_')
-                        if (args[0] === 'pesan' && arg.split('|')[1] === 'yes') {
+                        if (arg.split("|")[0] === 'pesan' && arg.split('|')[1] === 'yes') {
                             client.groupSettingChange(from, GroupSettingChange.messageSend, true)
                             reply('*Berhasil*')
-                        } else if ((args[0] === 'egrup' || args[0] === 'egroup') && arg.split('|')[1] === 'yes') {
+                        } else if ((arg.split("|")[0] === 'egrup' || arg.split("|")[0] === 'egroup') && arg.split('|')[1] === 'yes') {
                             client.groupSettingChange(from, GroupSettingChange.settingsChange, true)
                             reply('*Berhasil*')
-                        } else if (args[0] === 'pesan' && arg.split('|')[1] === 'no') {
+                        } else if (arg.split("|")[0] === 'pesan' && arg.split('|')[1] === 'no') {
                             client.groupSettingChange(from, GroupSettingChange.messageSend, false)
                             reply('*Berhasil*')
-                        } else if ((args[0] === 'egrup' || args[0] === 'egroup') && arg.split('|')[1] === 'no') {
+                        } else if ((arg.split("|")[0] === 'egrup' || arg.split("|")[0] === 'egroup') && arg.split('|')[1] === 'no') {
                             client.groupSettingChange(from, GroupSettingChange.settingsChange, false)
                             reply('*Berhasil*')
                         } else {
