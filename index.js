@@ -223,8 +223,8 @@ async function starts() {
             }
             client.sendMessage(from, `${output}`, text, options)
             } catch(err) {
-            console.error(err)
-            reply(err)
+                outerr = clean(err)
+                reply(`Error: ${outerr}`)
             }
             function clean(text) {
             if (typeof text === "string")
