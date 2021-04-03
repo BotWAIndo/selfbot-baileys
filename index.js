@@ -86,28 +86,29 @@ async function starts() {
             const groupMetadata = isGroup ? await client.groupMetadata(from) : ''
             const groupName = isGroup ? groupMetadata.subject : ''
             const groupId = isGroup ? groupMetadata.jid : ''
-			const groupMembers = isGroup ? groupMetadata.participants : ''
-			const groupAdmins = isGroup ? getGroupAdmins(groupMembers) : ''
-			const isBotGroupAdmins = groupAdmins.includes(botNumber) || false
+            const groupMembers = isGroup ? groupMetadata.participants : ''
+            const groupAdmins = isGroup ? getGroupAdmins(groupMembers) : ''
+            const isBotGroupAdmins = groupAdmins.includes(botNumber) || false
             const isGroupAdmins = groupAdmins.includes(sender) || false
             const isOwner = ownerNumber.includes(sender)
             pushname2 = client.contacts[sender1] != undefined ? client.contacts[sender1].vname || client.contacts[sender1].notify : undefined
-			const isUrl = (url) => {
-			    return url.match(new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)/, 'gi'))
-			}
-			const reply = (teks) => {
-				client.sendMessage(from, teks, text, {quoted:mek})
-			}
-			const sendMess = (hehe, teks) => {
-				client.sendMessage(hehe, teks, text)
-			}
-			const mentions = (teks, memberr, id) => {
-				(id == null || id == undefined || id == false) ? client.sendMessage(from, teks.trim(), extendedText, {contextInfo: {"mentionedJid": memberr}}) : client.sendMessage(from, teks.trim(), extendedText, {quoted: mek, contextInfo: {"mentionedJid": memberr}})
+            const isUrl = (url) => {
+                url.match(new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)/, 'gi'))
+            }
+            const reply = (text) => {
+                client.sendMessage(from, text, MessageType.text, {quoted:mek})
+            }
+            const sendMess = (jid, text) => {
+                client.sendMessage(jid, text, MessageType.text)
+            }
+            const mentions = (teks, memberr, quoted=null) => {
+                (quoted === null || quoted === undefined || quoted === false) ? client.sendMessage(from, teks, MessageType.extendedText, { contextInfo: { "mentionedJid": memberr } }) 
+                : client.sendMessage(from, teks, MessageType.extendedText, { contextInfo: {"mentionedJid": memberr } })
             }
 
             const isMedia = (type === 'imageMessage' || type === 'videoMessage')
-			const isQuotedImage = type === 'extendedTextMessage' && content.includes('imageMessage')
-			const isQuotedVideo = type === 'extendedTextMessage' && content.includes('videoMessage')
+            const isQuotedImage = type === 'extendedTextMessage' && content.includes('imageMessage')
+            const isQuotedVideo = type === 'extendedTextMessage' && content.includes('videoMessage')
             const isQuotedSticker = type === 'extendedTextMessage' && content.includes('stickerMessage')
             if (!isGroup && !isCmd) console.log(color(`[${time}]`, 'yellow'), color("[ PRIVATE ]", "aqua"), 'message from', color(sender1.split("@")[0]))
             if (isGroup && !isCmd) console.log(color(`[${time}]`, 'yellow'), color('[ GROUP ]', 'aqua'), 'message from', color(sender1.split("@")[0]), 'in', color(groupName))
