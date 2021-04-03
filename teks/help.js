@@ -1,5 +1,7 @@
-exports.Help = (prefix) => {
-    return `*SELFBOT*
+const moment = require("moment-timezone")
+
+exports.Help = (prefix, ms) => {
+    return `*SELFBOT*\nRamadhan in:\n${moment(ms - Date.now()).format("D [hari], H [jam], m [menit], s [detik]")}
 
 01. ${prefix}h -> hidetag
 02. ${prefix}f -> forward

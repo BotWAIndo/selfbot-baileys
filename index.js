@@ -25,18 +25,17 @@ const figlet = require('figlet')
 const lolcatjs = require('lolcatjs')
 const phoneNum = require('awesome-phonenumber')
 const { menuId } = require('./teks')
-const mmnt = require("moment")
-require("moment-duration-format")
 
-prefix = '.'
-fake = '𝐒𝐄𝐋𝐅𝐁𝐎𝐓'
-numbernya = '0'
-readyAt = new Date().valueOf()
+var prefix = '.'
+var fake = '𝐒𝐄𝐋𝐅𝐁𝐎𝐓'
+var numbernya = '0'
+var readyAt = new Date().valueOf()
+var ramadhan = new Date("2021","03","12").valueOf() //Don't remove this
 let gambar64 = "" || fs.readFileSync('./media/images/9739.png')
 
 function kyun() {
-    const moment = mmnt.duration(Date.now() - readyAt).format("D [hari], H [jam], m [menit], s [detik]")
-    return `- [ 𝙍𝙐𝙉𝙏𝙄𝙈𝙀 ] - \n${moment}`
+    const uptime = moment(Date.now() - readyAt).format("D [hari], H [jam], m [menit], s [detik]")
+    return `- [ 𝙍𝙐𝙉𝙏𝙄𝙈𝙀 ] - \n${uptime}`
 }
 
 async function starts() {
@@ -93,7 +92,7 @@ async function starts() {
             const isOwner = ownerNumber.includes(sender)
             pushname2 = client.contacts[sender1] != undefined ? client.contacts[sender1].vname || client.contacts[sender1].notify : undefined
             const isUrl = (url) => {
-                url.match(new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)/, 'gi'))
+                return url.match(new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)/, 'gi'))
             }
             const reply = (text) => {
                 client.sendMessage(from, text, MessageType.text, {quoted:mek})
@@ -124,7 +123,7 @@ async function starts() {
                             break
                     case 'help': {
                         const teks = {
-                            text: menuId.Help(prefix),
+                            text: menuId.Help(prefix, ramadhan),
                             contextInfo: {
                                 participant: `0@s.whatsapp.net`,
                                 remoteJid: "status@broadcast",
