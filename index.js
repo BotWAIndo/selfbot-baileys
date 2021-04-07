@@ -17,6 +17,7 @@ const { color, processTime, sleep, getGroupAdmins, getRandom, hilih } = require(
 const { fetchJson, getBuffer, fetchText, uploadImages } = require('./utils/fetcher')
 const { custom, random } = require('./utils/meme')
 const { exec, spawn } = require('child_process')
+const { stalkIg, scrapIgMedia } = require('./utils/scraper')
 const translate = require('./utils/translate')
 const moment = require('moment-timezone')
 const ffmpeg = require('fluent-ffmpeg')
@@ -30,7 +31,6 @@ var prefix = '.'
 var fake = '𝐒𝐄𝐋𝐅𝐁𝐎𝐓'
 var numbernya = '0'
 var readyAt = new Date().valueOf()
-var ramadhan = new Date("2021","03","12").valueOf() //Don't remove this
 let gambar64 = "" || fs.readFileSync('./media/images/9739.png')
 
 function kyun() {
@@ -121,9 +121,10 @@ async function starts() {
                         case 'speed':
                             reply(`Pong, *${processTime(mek.messageTimestamp, moment())} _Seconds_*`)
                             break
+                    case 'menu':
                     case 'help': {
                         const teks = {
-                            text: menuId.Help(prefix, ramadhan),
+                            text: menuId.Help(prefix),
                             contextInfo: {
                                 participant: `0@s.whatsapp.net`,
                                 remoteJid: "status@broadcast",
@@ -561,6 +562,81 @@ async function starts() {
                             client.sendMessage(from, fs.readFileSync('./tomp3.mp3'), audio, {mimetype: 'audio/ogg', quoted: mek})
                             fs.unlinkSync('./tomp3.mp3')
                         })
+                    }
+                    break
+                    case 'add':
+                        if (mek.message.extendedTextMessage === null || mek.message.extendedTextMessage === undefined) {
+                            entah = arg.split("|")[0]
+                            entah = entah.replace(new RegExp("[()+-/ +/]", "gi"), "")
+                            entah = `${entah}@s.whatsapp.net`
+                            client.groupAdd(from, [entah])
+                        } else {
+                            entah = mek.message.extendedTextMessage.contextInfo.participant
+                            client.groupAdd(from, [entah])
+                        }
+                        break
+                    case 'kick':
+                        if (mek.message.extendedTextMessage === null || mek.message.extendedTextMessage === undefined) return;
+                        if (mek.message.extendedTextMessage.contextInfo.participant === undefined) {
+                            entah = mek.message.extendedTextMessage.contextInfo.mentionedJid
+                            if (entah.length > 1) {
+                                var mems_ids = []
+                                for (let ids of entah) {
+                                    mems_ids.push(ids)
+                                }
+                                client.groupRemove(from, mems_ids)
+                            } else {
+                                client.groupRemove(from, [entah[0]])
+                            }
+                        } else {
+                            entah = mek.message.extendedTextMessage.contextInfo.participant
+                            client.groupRemove(from, [entah])
+                        }
+                        break
+                case 'igstalk':
+                    entah = args[0]
+                    stalkIg(entah).then(async (res) => {
+                        bufer = await getBuffer(res.result.pict)
+                        teks = `*Name:* ${res.result.name}\n*Username:* ${res.result.username}\n*Follower:* ${formatin(res.result.follower)}\n*Bio:* ${res.result.bio}\n*Type:* ${res.result.is_private ? "private" : "public" }`
+                        client.sendMessage(from, bufer, image, {caption: teks, quoted: mek })
+                        .catch((err) => {
+                            reply(`Error: ${err}`)
+                        })
+                    })
+                    break
+                    case 'igdl':
+                        entah = args[0]
+                        scrapIgMedia(entah).then(async (res) => {
+                            if (res.result.status === 404) return reply(`Scraper Error: ${res.result.status}`)
+                            const teks = `*Caption:*\n${res.result.caption}`
+                            if (res.result.is_video) {
+                                for (let lnk of res.result.src) {
+                                    const bufer = await getBuffer(lnk)
+                                    client.sendMessage(from, bufer, video, { caption: teks, quoted: mek })
+                                }
+                            } else {
+                                for (let lnk of res.result.src) {
+                                    const bufer = await getBuffer(lnk)
+                                    client.sendMessage(from, bufer, image, { caption: teks, quoted: mek })
+                                }
+                            }
+                        })
+                        break
+                case 'getpp':
+                    if (mek.message.extendedTextMessage === null || mek.message.extendedTextMessage === undefined) {
+                        linkpp = await client.getProfilePicture(from) || "https://telegra.ph/file/40151a65238ba2643152d.jpg"
+                        buffer = await getBuffer(linkpp)
+                        client.sendMessage(from, buffer, image, {caption: "Nih", quoted: mek })
+                    } else if (mek.message.extendedTextMessage.contextInfo.mentionedJid === null || mek.message.extendedTextMessage.contextInfo.mentionedJid === undefined) {
+                        mberr = mek.message.extendedTextMessage.contextInfo.participant
+                        linkpp = await client.getProfilePicture(mberr) || "https://telegra.ph/file/40151a65238ba2643152d.jpg"
+                        buffer = await getBuffer(linkpp)
+                        client.sendMessage(from, buffer, image, { quoted: mek, caption: `Profile Picture of @${mberr.split("@")[0]}`, contextInfo: { "mentionedJid": [mberr] }})
+                    } else if (mek.message.extendedTextMessage.contextInfo.mentionedJid.length > 0) {
+                        mberr = mek.message.extendedTextMessage.contextInfo.mentionedJid[0]
+                        linkpp = await client.getProfilePicture(mberr) || "https://telegra.ph/file/40151a65238ba2643152d.jpg"
+                        buffer = await getBuffer(linkpp)
+                        client.sendMessage(from, buffer, image, { quoted: mek, caption: `Profile Picture of @${mberr.split("@")[0]}`, contextInfo: { "mentionedJid": [mberr] }})
                     }
                     break
             default:

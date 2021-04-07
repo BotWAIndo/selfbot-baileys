@@ -1,7 +1,5 @@
-const moment = require("moment-timezone")
-
-exports.Help = (prefix, ms) => {
-    return `*SELFBOT*\nRamadhan in:\n${moment(ms - Date.now()).format("D [hari], H [jam], m [menit], s [detik]")}
+exports.Help = (prefix) => {
+    return `*SELFBOT*
 
 01. ${prefix}h -> hidetag
 02. ${prefix}f -> forward
@@ -28,5 +26,10 @@ exports.Help = (prefix, ms) => {
 23. ${prefix}kontag -> Kontak dengan Tag
 24. ${prefix}kontak -> Kirim Kontak
 25. ${prefix}tomp3 -> Video jadi mp3
-26. ${prefix}tr -> Terjemah bahasa asing`
+26. ${prefix}tr -> Terjemah bahasa asing
+27. ${prefix}add -> Add participant to group
+28. ${prefix}kick -> Remove participant from group
+29. ${prefix}igstalk -> Get basic info account from username
+30. ${prefix}igdl -> Download instagram media via link ( not support private account )
+31. ${prefix}getpp -> Get Profile Picture`
 }
