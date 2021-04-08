@@ -10,7 +10,7 @@ cd selfbot-baileys
 ## Installation Termux or Ubuntu/Debian
 PS: `Kalo ada yang kurang tambah sendiri. Asli saya lupa apa aja :D`
 ```sh
-pkg install -y ffmpeg imagemagick libwebp
+apt install -y ffmpeg imagemagick libwebp nodejs
 wget https://git.io/webp2gif && chmod +x webp2gif
 npm install
 ```
