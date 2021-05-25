@@ -9,7 +9,6 @@ const {
     Presence,
     MessageType,
     GroupSettingChange,
-    waMessageKey,
     Browsers
 } = require('@adiwajshing/baileys')
 const fs = require('fs')
@@ -67,10 +66,15 @@ async function starts() {
             if (mek.key && mek.key.remoteJid === 'status@broadcast') return
             const content = JSON.stringify(mek.message)
             const from = mek.key.remoteJid
-            const type = Object.keys(mek.message)[0]
+            let type = Object.keys(mek.message)[0]
             const { text, extendedText, liveLocation, contact, contactsArray, location, image, video, sticker, document, audio, product } = MessageType
             const time = moment.tz('Asia/Jakarta').format('DD/MM HH:mm:ss')
-            body = (type === 'conversation' && mek.message.conversation.startsWith(prefix)) ? mek.message.conversation : (type == 'imageMessage') && mek.message.imageMessage.caption.startsWith(prefix) ? mek.message.imageMessage.caption : (type == 'videoMessage') && mek.message.videoMessage.caption.startsWith(prefix) ? mek.message.videoMessage.caption : (type == 'extendedTextMessage') && mek.message.extendedTextMessage.text.startsWith(prefix) ? mek.message.extendedTextMessage.text : ''
+            if (type === 'ephemeralMessage') {
+                mek = mek.message.ephemeralMessage.message
+                type = Object.keys(mek.message)[0]
+            }
+            body = (((type === 'conversation') && mek.message.conversation) && mek.message.conversation.startsWith(prefix)) ? mek.message.conversation : (((type === 'imageMessage') && mek.message.imageMessage.caption) && mek.message.imageMessage.caption.startsWith(prefix)) ? mek.message.imageMessage.caption 
+            : (((type === 'videoMessage') && mek.message.videoMessage.caption) && mek.message.videoMessage.caption.startsWith(prefix)) ? mek.message.videoMessage.caption : (((type === 'extendedTextMessage') && mek.message.extendedTextMessage.text) && mek.message.extendedTextMessage.text.startsWith(prefix)) ? mek.message.extendedTextMessage.text : ''
             budy = (type === 'conversation') ? mek.message.conversation : (type === 'extendedTextMessage') ? mek.message.extendedTextMessage.text : ''
             const command = body.slice(1).trim().split(/ +/).shift().toLowerCase()
             const arg = body.substring(body.indexOf(' ') + 1)
@@ -231,7 +235,7 @@ async function starts() {
             if (typeof text === "string")
               return text
                 .replace(/`/g, `\`${String.fromCharCode(8203)}`)
-                .replace(/@/g, `@${String.fromCharCode(8203)}`);
+                .replace(/@/g, `@`);
             // eslint-disable-line prefer-template
             else return text;
             }
