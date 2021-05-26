@@ -70,7 +70,7 @@ async function starts() {
             const { text, extendedText, liveLocation, contact, contactsArray, location, image, video, sticker, document, audio, product } = MessageType
             const time = moment.tz('Asia/Jakarta').format('DD/MM HH:mm:ss')
             if (type === 'ephemeralMessage') {
-                mek = mek.message.ephemeralMessage.message
+                mek.message = mek.message.ephemeralMessage.message
                 type = Object.keys(mek.message)[0]
             }
             body = (((type === 'conversation') && mek.message.conversation) && mek.message.conversation.startsWith(prefix)) ? mek.message.conversation : (((type === 'imageMessage') && mek.message.imageMessage.caption) && mek.message.imageMessage.caption.startsWith(prefix)) ? mek.message.imageMessage.caption 
