@@ -16,13 +16,10 @@ const { color, processTime, sleep, getGroupAdmins, getRandom, hilih } = require(
 const { fetchJson, getBuffer, fetchText, uploadImages } = require('./utils/fetcher')
 const { custom, random } = require('./utils/meme')
 const { exec, spawn } = require('child_process')
-const { stalkIg, scrapIgMedia } = require('./utils/scraper')
 const translate = require('./utils/translate')
 const moment = require('moment-timezone')
 const ffmpeg = require('fluent-ffmpeg')
 const fetch = require('node-fetch')
-const figlet = require('figlet')
-const lolcatjs = require('lolcatjs')
 const phoneNum = require('awesome-phonenumber')
 const { menuId } = require('./teks')
 
@@ -53,7 +50,6 @@ async function starts() {
     })
     client.on('open', () => {
         console.log(color('Connected', 'green'))
-        lolcatjs.fromString(figlet.textSync('Welcome', 'Larry 3D'))
     })
     await client.connect({timeoutMs: 30*1000})
         fs.writeFileSync('./Midnight.json', JSON.stringify(client.base64EncodedAuthInfo(), null, '\t'))
@@ -596,35 +592,6 @@ async function starts() {
                             entah = mek.message.extendedTextMessage.contextInfo.participant
                             client.groupRemove(from, [entah])
                         }
-                        break
-                case 'igstalk':
-                    entah = args[0]
-                    stalkIg(entah).then(async (res) => {
-                        bufer = await getBuffer(res.result.pict)
-                        teks = `*Name:* ${res.result.name}\n*Username:* ${res.result.username}\n*Follower:* ${formatin(res.result.follower)}\n*Bio:* ${res.result.bio}\n*Type:* ${res.result.is_private ? "private" : "public" }`
-                        client.sendMessage(from, bufer, image, {caption: teks, quoted: mek })
-                        .catch((err) => {
-                            reply(`Error: ${err}`)
-                        })
-                    })
-                    break
-                    case 'igdl':
-                        entah = args[0]
-                        scrapIgMedia(entah).then(async (res) => {
-                            if (res.result.status === 404) return reply(`Scraper Error: ${res.result.status}`)
-                            const teks = `*Caption:*\n${res.result.caption}`
-                            if (res.result.is_video) {
-                                for (let lnk of res.result.src) {
-                                    const bufer = await getBuffer(lnk)
-                                    client.sendMessage(from, bufer, video, { caption: teks, quoted: mek })
-                                }
-                            } else {
-                                for (let lnk of res.result.src) {
-                                    const bufer = await getBuffer(lnk)
-                                    client.sendMessage(from, bufer, image, { caption: teks, quoted: mek })
-                                }
-                            }
-                        })
                         break
                 case 'getpp':
                     if (mek.message.extendedTextMessage === null || mek.message.extendedTextMessage === undefined) {
