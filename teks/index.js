@@ -1,1 +1,0 @@
-exports.menuId = require('./help')

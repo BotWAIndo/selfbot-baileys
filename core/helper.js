@@ -70,6 +70,7 @@ exports.serialize = function(d) {
     : (m.type == 'extendedTextMessage') && m.message[m.type].text ? m.message[m.type].text : ''
 
     m.body = text
+    return m
 }
 
 /**
@@ -89,4 +90,17 @@ exports.sendText = function(jid, text) {
  */
 exports.reply = function(jid, text, m={}) {
     wa.sendMessage(jid, text, MessageType.text, { quoted: m })
+}
+
+/**
+ * mentions
+ * @param {String} jid the id of chat
+ * @param {String} text your text
+ * @param {Array} participants participants jid in array
+ * @param {Object} m message want to quote
+ */
+exports.mentions = function(jid, text, participants, m={}) {
+    if (!text) throw new Error('Parameter \'text\' must be filled.')
+    if (typeof text !== 'string') throw new TypeError(`\'text\' need to be string. Received ${typeof text}`)
+    wa.sendMessage(jid, text, MessageType.extendedText, { quoted: m, contextInfo: { mentionedJid: participants }})
 }

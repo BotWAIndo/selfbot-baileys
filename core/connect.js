@@ -20,9 +20,9 @@ exports.connect = async () => {
         console.log('Scan QR Code above!')
     })
 
-    fs.existsSync('./Midnight.json') && con.loadAuthInfo('./Mindight.json')
+    fs.existsSync('./Midnight.json') && con.loadAuthInfo('./Midnight.json')
     await con.connect({ timeoutMs: 10*1000 })
     fs.writeFileSync('./Midnight.json', JSON.stringify(con.base64EncodedAuthInfo(), null, '\t'))
 
-    return conn
+    return con
 }

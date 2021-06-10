@@ -64,7 +64,7 @@ const getBuffer = async (url, options) => {
  */
 const uploadImages = (buffData, type) => {
     return new Promise(async (resolve, reject) => {
-        const { ext } = fromBuffer(buffData)
+        const { ext } = await fromBuffer(buffData)
         const filePath = 'utils/temp.' + ext
         fs.writeFile(filePath, buffData, { encoding: 'base64' }, (err) => {
             if (err) return reject(err)
