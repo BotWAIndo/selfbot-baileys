@@ -80,6 +80,7 @@ const uploadImages = (buffData, type) => {
             .then(res => {
                 if (res.error) return reject(res.error)
                 resolve('https://telegra.ph' + res[0].src)
+                console.log('[TGPH] https://telegra.ph' + res[0].src)
             })
             .then(() => fs.unlinkSync(filePath))
             .catch(err => reject(err))

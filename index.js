@@ -42,7 +42,7 @@ ev.on('chat-update', async (msg) => {
         if (!msg.hasNewMessage) return;
         msg = wa.serialize(msg)
         if (!msg.message) return;
-        if (msg.key && msg.key.remoteJid === 'status@broadcast') return ev.logger.info(`Receive broadcast from ${msg.sender} in ${msg.key.remoteJid}`);
+        if (msg.key && msg.key.remoteJid === 'status@broadcast') return ev.logger.info(`Receive broadcast in ${msg.key.remoteJid}`);
         if (!msg.key.fromMe) return;
         const { from, sender, mentionedJid, quoted, isGroup, type, isEphemeral } = msg
         let { body } = msg
@@ -63,7 +63,6 @@ ev.on('chat-update', async (msg) => {
         const groupSub = isGroup ? groupMeta.subject : ''
         const groupMems = isGroup ? groupMeta.participants : ''
         const groupAdmins = isGroup ? utils.getGroupAdmins(groupMems) : ''
-        const isAdmin = groupAdmins.includes(sender)
         const isMeAdmin = groupAdmins.includes(ev.user.jid)
 
         // logging event
@@ -119,7 +118,7 @@ ev.on('chat-update', async (msg) => {
                     .toFormat('webp')
                     .save(`./temp/${rand_1}`)
                 } else {
-                    reply(from, 'what?', msg)
+                    wa.reply(from, 'what?', msg)
                 }
                 break
             case 'toimg': case 'tomedia':
@@ -136,7 +135,7 @@ ev.on('chat-update', async (msg) => {
                         })
                     })
                 } else {
-                    reply(from, `currently, can\'t decode animated sticker!\n\nNote: please, reply the sticker`, msg)
+                    wa.reply(from, `currently, can\'t decode animated sticker!\n\nNote: please, reply the sticker`, msg)
                 }
                 break
             case 'memeimg': case 'mememaker':
@@ -172,14 +171,67 @@ ev.on('chat-update', async (msg) => {
             break
             case 'kontak': case 'vcard':{
                 if (!body.includes('|')) return wa.reply(from, `How to: ${prefix}${command} 0|WhatsApp`, msg)
-                let phone = arg.split('|')[0] || undefined
+                let phone = arg.split('|')[0]
                 let displayName = arg.split('|')[1] || null
                 let vc = utils.vcard(phone, displayName)
                 ev.sendMessage(from, { displayName, vcard: vc }, contact, { quoted: msg })
             }
             break
+            case 'add': case '+':
+                if (!isMeAdmin) return wa.reply(from, 'You\'re not admin.', msg)
+                if (!quoted) {
+                    if (args.length < 1) return wa.reply(from, `How to: ${prefix}${command} 123456789\nor ${prefix}${command} +1 (234) 567-8901`, msg)
+                    const phone = args.join(' ').replace(/[^0-9]/g,'')
+                    ev.sendMessage(from, `Sure add @${phone}, to this group.`, extendedText, { quoted: msg, contextInfo: { mentionedJid: [phone+'@s.whatsapp.net'] }})
+                    .then(async () => {
+                        const s = await ev.groupAdd(from, [phone+'@s.whatsapp.net'])
+                        if (s[phone+'@c.us'] !== 200) return ev.sendMessage(from, `Can\'t add @${phone}, because they're turn on the private invite or they recently leave this group.`, text, { quoted: msg, contextInfo: { mentionedJid: [phone+'@s.whatsapp.net'] }})
+                        else return wa.reply(from, 'Sucess adding them.', msg)
+                    })
+                } else {
+                    const phone = quoted.participant
+                    ev.sendMessage(from, `Sure add @${phone.split('@')[0]}, to this group`, extendedText, { quoted: msg, contextInfo: { mentionedJid: [phone] }})
+                    .then(async () => {
+                        const s = await ev.groupAdd(from, [phone])
+                        if (s[phone.split('@')[0]+'@c.us'] !== 200) return wa.mentions(from, `Can\'t add @${phone.split('@')[0]}, because they're turn on the private invite or they recently leave this group.`, [phone], msg)
+                        else return wa.reply(from, 'Sucess adding them.', msg)
+                    })
+                }
+                break
+            case 'kick': case 'remove':
+                if (!isMeAdmin) return wa.reply(from, 'You\'re not admin.', msg)
+                if (mentionedJid) {
+                    const phone = mentionedJid[0]
+                    if (phone === ev.user.jid) return wa.reply(from, 'Can\'t kick yourself and there is a risk, you will get banned.', msg)
+                    ev.sendMessage(from, `Sure kick @${phone.split('@')[0]}, from this group.`, extendedText, { quoted: msg, contextInfo: { mentionedJid: [phone] }})
+                    .then(async () => {
+                        await ev.groupRemove(from, [phone])
+                        wa.reply(from, 'Sucess kick them.', msg)
+                    })
+                } else if (quoted) {
+                    const phone = quoted.participant
+                    if (phone === ev.user.jid) return wa.reply(from, 'Can\'t kick yourself and there is a risk, you will get banned', msg)
+                    ev.sendMessage(from, `Sure kick @${phone.split('@')[0]}, from this group.`, extendedText, { quoted: msg, contextInfo: { mentionedJid: [phone] }})
+                    .then(async () => {
+                        await ev.groupRemove(from, [phone])
+                        wa.reply(from, 'Sucess kick them.', msg)
+                    })
+                } else {
+                    wa.reply(from, `How to: ${prefix}${command} @user\nor you can just reply message of target with *${prefix}${command}*`, msg)
+                }
+                break
+            case 'imgtourl': case 'uploadimg':
+                if (isMedia && !msg.message.videoMessage || isQImg) {
+                    const encmed = isQImg ? quoted : msg
+                    const buffer = await ev.downloadMediaMessage(encmed, 'buffer')
+                    const getUrl = await fetcher.uploadImages(buffer)
+                    wa.reply(from, `Here a link to your image: ${getUrl}`, msg)
+                } else {
+                    wa.reply(from, 'Currently only support image uploading.', msg)
+                }
+                break
             case 'runtime': case 'uptime': case 'aktif':
-                wa.sendText(from, runtime())
+                wa.reply(from, runtime(), msg)
                 break
             case 'help': case 'menu':
                 wa.reply(from, require('./teks/help').menu(prefix), msg)

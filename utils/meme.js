@@ -27,6 +27,7 @@ const random = (subreddit) => new Promise((resolve, reject) => {
 const custom = async (imageUrl, top, bottom) => new Promise((resolve, reject) => {
     topText = top.trim().replace(/\s/g, '_').replace(/\?/g, '~q').replace(/\%/g, '~p').replace(/\#/g, '~h').replace(/\//g, '~s')
     bottomText = bottom.trim().replace(/\s/g, '_').replace(/\?/g, '~q').replace(/\%/g, '~p').replace(/\#/g, '~h').replace(/\//g, '~s')
+    console.log('[MEME API]', `https://api.memegen.link/custom/${topText}/${bottomText}.png?background=${imageUrl}`)
     getBuffer(`https://api.memegen.link/images/custom/${topText}/${bottomText}.png?background=${imageUrl}`)
         .then((result) => resolve(result))
         .catch((err) => {

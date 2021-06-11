@@ -89,7 +89,7 @@ exports.sendText = function(jid, text) {
  * @param {Object} m message you want to quote
  */
 exports.reply = function(jid, text, m={}) {
-    wa.sendMessage(jid, text, MessageType.text, { quoted: m })
+    wa.sendMessage(jid, text, MessageType.text, { quoted: m, detctLinks: false })
 }
 
 /**
