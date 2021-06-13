@@ -1,9 +1,11 @@
+"use strict";
 // system
 const con = require('./core/connect')
 const wa = require('./core/helper')
 const {
     MessageType,
-    Mimetype
+    Mimetype,
+    GroupSettingChange
 } = require('@adiwajshing/baileys')
 
 // needed
@@ -230,11 +232,113 @@ ev.on('chat-update', async (msg) => {
                     wa.reply(from, 'Currently only support image uploading.', msg)
                 }
                 break
+            case 'tr':
+                if (args.length < 1) return wa.reply(from, `How to: ${prefix+command} id hello\nor you can quote someone message with *${prefix+command} id*`, msg)
+                if (quoted) {
+                    const tipe = Object.keys(quoted.message)[0]
+                    const text = (tipe == 'conversation') && quoted.message[tipe] ? quoted.message[tipe]
+                    : (tipe == 'extendedTextMessage') && quoted.message[tipe].text ? quoted.message[tipe].text : ''
+                    const lang = args[0]
+                    translate(text, lang).then((r) => {
+                        wa.reply(from, r, msg)
+                    })
+                } else {
+                    let text = (type == 'conversation') && msg.message[type] ? msg.message[type]
+                    : (type == 'extendedTextMessage') && msg.message[type].text ? msg.message[type].text : ''
+                    const lang = args[0]
+                    text = text.slice(4+lang.length+1)
+                    translate(text, lang).then((r) => {
+                        wa.reply(from, r, msg)
+                    })
+                }
+                break
+            case 'gcst': case 'groupset': case 'groupsetting':
+                if (!isMeAdmin) return wa.reply(from, 'I\'m not admin!', msg)
+                if (args.length < 1) return wa.reply(from, `How to: ${prefix+command} close\nAvailable setting:\n- close\n- open`, msg)
+                if (args[0] === 'close' || args[0] === 'tutup') {
+                    await ev.groupSettingChange(from, GroupSettingChange.messageSend, true)
+                    .then(() => { wa.reply(from, 'Sucess', msg) })
+                } else if (args[0] === 'open' || args[0] === 'buka') {
+                    await ev.groupSettingChange(from, GroupSettingChange.messageSend, false)
+                    .then(() => { wa.reply(from, 'Sucess', msg) })
+                }
+                break
+            case 'getpp': case 'stealpp':
+                if (mentionedJid) {
+                    const phone = mentionedJid[0]
+                    let linkpp;
+                    try {
+                        linkpp = await ev.getProfilePicture(phone)
+                    } catch {
+                        linkpp = 'https://telegra.ph/file/40151a65238ba2643152d.jpg'
+                    }
+                    const buff = await fetcher.getBuffer(linkpp)
+                    await ev.sendMessage(from, buff, image, { quoted: msg, caption: `@${phone.split('@')[0]}`, contextInfo: { mentionedJid: [phone] }})
+                } else if (quoted) {
+                    const phone = quoted.participant
+                    let linkpp;
+                    try {
+                        linkpp = await ev.getProfilePicture(phone)
+                    } catch {
+                        linkpp = 'https://telegra.ph/file/40151a65238ba2643152d.jpg'
+                    }
+                    const buff = await fetcher.getBuffer(linkpp)
+                    await ev.sendMessage(from, buff, image, { quoted: msg, caption: `@${phone.split('@')[0]}`, contextInfo: { mentionedJid: [phone] }})
+                } else {
+                    let linkpp;
+                    try {
+                        linkpp = await ev.getProfilePicture(from)
+                    } catch {
+                        linkpp = 'https://telegra.ph/file/40151a65238ba2643152d.jpg'
+                    }
+                    const buff = await fetcher.getBuffer(linkpp)
+                    await ev.sendMessage(from, buff, image, { quoted: msg })
+                }
+                break
             case 'runtime': case 'uptime': case 'aktif':
                 wa.reply(from, runtime(), msg)
                 break
             case 'help': case 'menu':
                 wa.reply(from, require('./teks/help').menu(prefix), msg)
+                break
+            case 'setnick': case 'nick':
+                if (!args.length < 1) return wa.reply(from, `How to: ${prefix+command} naisNick`, msg)
+                ev.updateProfileName(args.join(' ')).then(() => {
+                    wa.reply(from, 'Sucess', msg)
+                })
+                break
+            case 'setpict': case 'pp':
+                if (isMedia && !msg.message.videoMessage || isQImg) {
+                    const buff = await ev.downloadMediaMessage((isQImg ? quoted : msg), 'buffer')
+                    await ev.updateProfilePicture(ev.user.jid, buff).then(() => {
+                        wa.reply(from, 'Succes', msg)
+                    })
+                } else {
+                    wa.reply(from, `send image or reply image with caption ${prefix+command}`, msg)
+                }
+                break
+            case 'setprefix': case 'prefix':
+                if (!args.length < 1) return wa.reply(from, `How to: ${prefix+command} F`, msg)
+                prefix = args[0]
+                wa.reply(from, 'Sucess', msg)
+                break
+            case 'copy': case 'copyuser':
+                if (quoted) {
+                    const cpN = ev.contacts[quoted.participant] !== undefined ? (ev.contacts[quoted.participant].notify || ev.contacts[quoted.participant].vname) || ev.contacts[quoted.participant].name : null
+                    let linkpp;
+                    try {
+                        linkpp = await ev.getProfilePicture(quoted.participant)
+                    } catch {
+                        linkpp = 'https://telegra.ph/file/40151a65238ba2643152d.jpg'
+                    }
+                    const buff = await fetcher.getBuffer(linkpp, {})
+                    await ev.updateProfilePicture(ev.user.jid, buff).then(async () => {
+                        await ev.updateProfileName(cpN)
+                        wa.reply(from, 'Succes', msg)
+                    })
+                } else {
+                    wa.reply(from, `Reply someone with ${prefix+command} to copy their pfp and nickname`, msg)
+                }
                 break
         }
     } catch(e) {

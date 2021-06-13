@@ -1,36 +1,70 @@
 <h2 align="center">Baileys SelfBot</h2>
-<p align="center">Use at your own risk!!</p>
+<p align="center">Use At Your Own Risk</p>
 
-## Cloning
-```sh
-git clone https://github.com/BotWAIndo/selfbot-baileys.git
-cd selfbot-baileys
-```
+# Begin
+## What this bot needed
+### Ubuntu&Termux
+1. `ffmpeg`, `libwebp`, `nodejs`, `git`
+2. install all needed
+```bash
+# Termux, make sure ffmpeg version is 4.x
+pkg update && pkg upgrade
+pkg install ffmpeg libwebp nodejs git -y
 
-## Installation Termux or Ubuntu/Debian
-PS: `Kalo ada yang kurang tambah sendiri. Asli saya lupa apa aja :D`
-```sh
-apt install -y ffmpeg imagemagick libwebp nodejs
-wget https://git.io/webp2gif && chmod +x webp2gif
+# change directory to 'selfbot'
+git clone https://github.com/BotWAIndo/selfbot-baileys.git 'selfbot'
+cd selfbot
+
+# install npm package
 npm install
+
+# run
+npm start
 ```
 
-## Run Bot
-```sh
-node index.js
+<br />
+
+```bash
+# Ubuntu, make sure ffmpeg version is 4.x
+apt-get update
+apt-get install ffmpeg nodejs libwebp git -y
+ 
+ # change directory
+ git clone https://github.com/BotWAIndo/selfbot-baileys.git 'selfbot'
+ cd selfbot
+
+ # install npm package
+ npm install
+
+ # run
+ npm start
 ```
 
-## Basic Info
-`prefix:` . [change here](https://github.com/BotWAIndo/selfbot-baileys/blob/master/index.js#L24) | bisa juga menggunakan `.setprefix <new prefix>` <br />
-`fake reply:` 𝐒𝐄𝐋𝐅𝐁𝐎𝐓 [change here](https://github.com/BotWAIndo/selfbot-baileys/blob/master/index.js#L25) | bisa juga menggunakan `.setpesan <pesan baru>` <br />
-**Mungkin translate sedikit kurang akurat**
+### Windows
+1. `ffmpeg`, `libwebp`, `nodejs`, `git`
+   - [ffmpeg](https://ffmpeg.org)
+   - [nodejs](https://nodejs.org)
+   - [libwebp](https://developers.google.com/speed/webp/download)
+   - [git](https://git-scm.com)
 
-## Peringatan Keras
-**Jika kamu ingin merecode SC (source code) ini mohon janngan dihapus yah nama saya :D**<br />
-**sakit tau, bayangkan karya kamu diambil orang tanpa ada nama kamu disitu :'D**
+2. path ffmpeg and libwebp
+   - download ffmpeg and libwebp
+   - extract to directory `C:\`
+   - rename the extracted folder name of ffmpeg to `ffmpeg` and rename the extracted folder name of libwebp to `libwebp`
+   - run cmd as administrator, then execute following command:
+```bash
+setx /m PATH "C:\libwebp\bin;%PATH%"
+setx /m PATH "C:\ffmpeg\bini;%PATH%"
 
-## Terima Kasih
-- [MhankBarBar](https://github.com/github.com/MhankBarBar)
-    - [termux-wabot](https://github.com/MhankBarBar/termux-wabot)
-- [adiwajshing](https://github.com/adiwajshing)
-    - [Baileys](https://github.com/adiwajshing/baileys)
+# if all command succes, the output is: 'SUCCESS: spesified value was saved'
+```
+
+3. install npm package and run
+```bash
+npm install
+npm start
+```
+
+## Thanks
+- [adiwajshing](https://github.com/adiwajshing) `baileys creator/author`
+    - [Baileys](https://github.com/adiwajshing/Baileys)
