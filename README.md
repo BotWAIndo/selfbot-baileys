@@ -59,8 +59,10 @@ setx /m PATH "C:\ffmpeg\bini;%PATH%"
 # if all command succes, the output is: 'SUCCESS: spesified value was saved'
 ```
 
-3. install npm package and run
+3. cloning, install npm package and run
 ```bash
+git clone https://github.com/BotWAIndo/selfbot-baileys.git 'selfbot'
+cd selfbot
 npm install
 npm start
 ```
