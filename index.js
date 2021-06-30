@@ -166,7 +166,7 @@ ev.on('chat-update', async (msg) => {
             case 'more': case 'readmore':{
                 if (!body.includes('|')) return wa.reply(from, `How to: ${prefix+command} hello|there`, msg)
                 let text = String.fromCharCode(8206)
-                wa.reply(from, arg.split('|')[0] + text + arg.split('|')[1], msg)
+                wa.reply(from, arg.split('|')[0] + text.repeat(4001) + arg.split('|')[1], msg)
             }
             break
             case 'h': case 'hidetag': case 'hide':{
