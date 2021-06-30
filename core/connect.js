@@ -9,7 +9,7 @@ exports.WhatsApp = con
 exports.connect = async () => {
 
     // Custom Browser
-    con.browserDescription = ['Windows','Desktop','3.0']
+    con.browserDescription = ['SelfBot', 'Firefox', '88']
 
     con.on('open', () => {
         console.log('Credential updated!')
