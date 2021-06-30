@@ -163,6 +163,12 @@ ev.on('chat-update', async (msg) => {
                 wa.mentions(from, teks, mems_id, msg)
             }
             break
+            case 'more': case 'readmore':{
+                if (!body.includes('|')) return wa.reply(from, `How to: ${prefix+command} hello|there`, msg)
+                let text = String.fromCharCode(8206)
+                wa.reply(from, arg.split('|')[0] + text + arg.split('|')[1], msg)
+            }
+            break
             case 'h': case 'hidetag': case 'hide':{
                 let mems_id = new Array()
                 for (let f of groupMems) {
@@ -324,7 +330,7 @@ ev.on('chat-update', async (msg) => {
                 break
             case 'copy': case 'copyuser':
                 if (quoted) {
-                    const cpN = ev.contacts[quoted.participant] !== undefined ? (ev.contacts[quoted.participant].notify || ev.contacts[quoted.participant].vname) || ev.contacts[quoted.participant].name : null
+                    const cpN = ev.contacts[quoted.participant] !== undefined ? (ev.contacts[quoted.participant].notify || ev.contacts[quoted.participant].vname) || ev.contacts[quoted.participant].name : ev.user.name
                     let linkpp;
                     try {
                         linkpp = await ev.getProfilePicture(quoted.participant)
