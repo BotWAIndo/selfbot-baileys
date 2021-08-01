@@ -54,7 +54,7 @@ apt-get install ffmpeg nodejs libwebp git -y
    - run cmd as administrator, then execute following command:
 ```bash
 setx /m PATH "C:\libwebp\bin;%PATH%"
-setx /m PATH "C:\ffmpeg\bini;%PATH%"
+setx /m PATH "C:\ffmpeg\bin;%PATH%"
 
 # if all command succes, the output is: 'SUCCESS: spesified value was saved'
 ```
