@@ -9,69 +9,133 @@ const { fromBuffer } = require('file-type')
 
 const wa = con.WhatsApp
 
-exports.serialize = function(d) {
-    m = JSON.parse(JSON.stringify(d)).messages[0]
-    const content = m.message
-
+exports.serialize = function (chat) {
+    m = JSON.parse(JSON.stringify(chat)).messages[0];
+    const content = m.message;
+  
     try {
-        const tipe = Object.keys(content)[0]
-        m.type = tipe
+      const tipe = Object.keys(content)[0];
+      m.type = tipe;
     } catch {
-        m.type = null
+      m.type = null;
     }
-
+  
+    if (m.type === 'viewOnceMessage') {
+      m.message = m.message.viewOnceMessage.message;
+  
+      try {
+        const tipe = Object.keys(m.message)[0];
+        m.type = tipe;
+      } catch {
+        m.type = null;
+      }
+    }
+  
     if (m.type === 'ephemeralMessage') {
-        m.message = m.message.ephemeralMessage.message
+      m.message = m.message.ephemeralMessage.message;
+      const tipe = Object.keys(m.message)[0];
+  
+      if (tipe === 'viewOnceMessage') {
+        m.message = m.message.viewOnceMessage.message;
+  
         try {
-            const tipe = Object.keys(m.message)[0]
-            m.type = tipe
+          const tipe = Object.keys(m.message)[0];
+          m.type = tipe;
         } catch {
-            m.type = null
+          m.type = null;
         }
-        m.isEphemeral = true
+      }
+  
+      try {
+        const tipe = Object.keys(m.message)[0];
+        m.type = tipe;
+      } catch {
+        m.type = null;
+      }
+  
+      m.isEphemeral = true;
     } else {
-        m.isEphemeral = false
+      m.isEphemeral = false;
     }
-
-    m.isGroup = m.key.remoteJid.endsWith('@g.us')
-    m.from = m.key.remoteJid
-
+  
+    m.isGroup = m.key.remoteJid.endsWith('@g.us');
+    m.from = m.key.remoteJid;
+  
     try {
-        const quote = m.message.extendedTextMessage.contextInfo
-        if (quote.quotedMessage['ephemeralMessage']) {
-            m.quoted = { id: quote.stanzaId, participant: quote.participant, message: quote.quotedMessage.ephemeralMessage.message }
+      const quote = m.message[m.type].contextInfo;
+      if (quote.quotedMessage['ephemeralMessage']) {
+        const tipe = Object.keys(quote.quotedMessage['ephemeralMessage'].message)[0];
+        console.log(tipe);
+  
+        if (tipe === 'viewOnceMessage') {
+          m.quoted = {
+            type: 'view_once',
+            stanzaId: quote.stanzaId,
+            participant: quote.participant,
+            message: quote.quotedMessage.ephemeralMessage.message.viewOnceMessage.message
+          }
         } else {
-            m.quoted = { id: quote.stanzaId, participant: quote.participant, message: quote.quotedMessage }
+          m.quoted = {
+            type: 'ephemeral',
+            stanzaId: quote.stanzaId,
+            participant: quote.participant,
+            message: quote.quotedMessage.ephemeralMessage.message,
+          };
         }
+      } else if (quote.quotedMessage['viewOnceMessage']) {
+        m.quoted = {
+          type: 'view_once',
+          stanzaId: quote.stanzaId,
+          participant: quote.participant,
+          message: quote.quotedMessage.viewOnceMessage.message
+        };
+      } else {
+        m.quoted= {
+          type: 'normal',
+          stanzaId: quote.stanzaId,
+          participant: quote.participant,
+          message: quote.quotedMessage
+        }
+      }
     } catch {
-        m.quoted = null
+      m.quoted = null;
     }
-
+  
     try {
-        const mention = m.message[m.type].contextInfo.mentionedJid
-        m.mentionedJid = mention
+      const mention = m.message[m.type].contextInfo.mentionedJid;
+      m.mentionedJid = mention;
     } catch {
-        m.mentionedJid = null
+      m.mentionedJid = null;
     }
-
+  
     if (m.isGroup) {
-        m.sender = m.participant
+      m.sender = m.participant;
     } else {
-        m.sender = m.key.remoteJid
+      m.sender = m.key.remoteJid;
     }
-
+  
     if (m.key.fromMe) {
-        m.sender = wa.user.jid
+      m.sender = wa.user.jid;
     }
-
-    const text = (m.type === 'conversation') && m.message[m.type] ? m.message[m.type]
-    : (m.type == 'imageMessage') && m.message[m.type].caption ? m.message[m.type].caption
-    : (m.type == 'videoMessage') && m.message[m.type].caption ? m.message[m.type].caption
-    : (m.type == 'extendedTextMessage') && m.message[m.type].text ? m.message[m.type].text : ''
-
-    m.body = text
-    return m
-}
+  
+    const txt =
+      m.type === 'conversation' && m.message[m.type]
+        ? m.message[m.type]
+        : m.type == 'imageMessage' && m.message[m.type].caption
+        ? m.message[m.type].caption
+        : m.type == 'videoMessage' && m.message[m.type].caption
+        ? m.message[m.type].caption
+        : m.type == 'extendedTextMessage' && m.message[m.type].text
+        ? m.message[m.type].text
+        : m.type == 'buttonsResponseMessage' && m.message[m.type].selectedButtonId
+        ? m.message[m.type].selectedButtonId
+        : m.type == 'listResponseMessage' && m.message[m.type].singleSelectReply.selectedRowId
+        ? m.message[m.type].singleSelectReply.selectedRowId
+        : '';
+    m.body = txt;
+  
+    return m;
+  };
 
 /**
  * sendText
